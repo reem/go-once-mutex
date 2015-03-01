@@ -1,4 +1,4 @@
-# Once Mutex [![Build Status](https://travis-ci.org/reem/go-once-mutex?branch=master)](https://travis-ci.org/reem/go-once-mutex)
+# Once Mutex [![Build Status](https://travis-ci.org/reem/go-once-mutex.svg?branch=master)](https://travis-ci.org/reem/go-once-mutex)
 
 > A Mutex offering one-time locking then infinite, concurrent, lock-free reads.
 
