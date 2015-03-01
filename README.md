@@ -10,6 +10,11 @@ OnceMutex offers READ ONLY access after the initial lock - it is CRUCIAL that
 the return value of `Lock` is ALWAYS checked and respected when mutation is
 attempted, or data races could trivially arise.
 
+This type is mostly useful for implementing lazily-evaluated types or other
+similar primitives, since it can act as the implementation of blackholing.
+OnceMutex is meant to be used within other libraries, and rarely by users
+directly.
+
 ## Example
 
 ```go
