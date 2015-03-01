@@ -15,7 +15,7 @@ attempted, or data races could trivially arise.
 ```go
 package main
 
-import once "github.com/reem/go-once-mutex"
+import oncem "github.com/reem/go-once-mutex"
 import "fmt"
 
 type Data struct {
@@ -25,7 +25,7 @@ type Data struct {
 func main() {
     // It is only legal to access data after thunk.Force has been called.
     data := &Data{0}
-    once := &once.OnceMutex{}
+    once := oncem.NewOnceMutex()
 
     // "Expensive computation run!" will be printed once
     // some time after this.
