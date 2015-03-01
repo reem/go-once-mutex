@@ -2,7 +2,7 @@ package oncemutex
 
 import (
 	"sync"
-	atom "sync/atomic"
+	"sync/atomic"
 )
 
 const (
@@ -24,7 +24,7 @@ func NewOnceMutex() *OnceMutex {
 }
 
 func (o *OnceMutex) Lock() (lockedbefore bool) {
-	state := atom.LoadUint32(&o.state)
+	state := atomic.LoadUint32(&o.state)
 	// The state is definitely free.
 	if state == free {
 		lockedbefore = true
@@ -41,7 +41,7 @@ func (o *OnceMutex) Lock() (lockedbefore bool) {
 		return
 	}
 
-	if atom.CompareAndSwapUint32(&o.state, unused, locked) {
+	if atomic.CompareAndSwapUint32(&o.state, unused, locked) {
 		// Was unused, we are now locked.
 		lockedbefore = false
 		o.mu.Lock()
@@ -57,7 +57,7 @@ func (o *OnceMutex) Lock() (lockedbefore bool) {
 }
 
 func (o *OnceMutex) Unlock() {
-	if atom.CompareAndSwapUint32(&o.state, locked, free) {
+	if atomic.CompareAndSwapUint32(&o.state, locked, free) {
 		o.mu.Unlock()
 		return
 	}
