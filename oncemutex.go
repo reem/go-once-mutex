@@ -12,15 +12,15 @@ const (
 )
 
 // A mutex which can only be locked once, but which provides
-// very fast, lock-free, concurrent reads after the first
-// lock is over.
+// very fast, lock-free, concurrent read-only locks after the
+// first lock is over.
 type OnceMutex struct {
-	mu    *sync.Mutex
+	mu    sync.Mutex
 	state uint32
 }
 
 func NewOnceMutex() *OnceMutex {
-	return &OnceMutex{&sync.Mutex{}, unused}
+	return &OnceMutex{sync.Mutex{}, unused}
 }
 
 func (o *OnceMutex) Lock() (lockedbefore bool) {
@@ -33,8 +33,19 @@ func (o *OnceMutex) Lock() (lockedbefore bool) {
 
 	// The state is locked, or might have been unlocked already.
 	if state == locked {
-		// Once we have the lock, state == free
+		// Once we have the lock check for a race.
 		o.mu.Lock()
+
+		// state could be free or could still be locked
+		if atomic.LoadUint32(&o.state) == locked {
+			// We acquired the mutex racily and incorrectly, unlock it
+			// to allow the proper goroutine to acquire the lock.
+			o.mu.Unlock()
+
+			// Now when we acquire the lock the state will be free.
+			o.mu.Lock()
+		}
+
 		o.mu.Unlock()
 
 		lockedbefore = true
