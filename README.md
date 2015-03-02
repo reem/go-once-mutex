@@ -24,7 +24,7 @@ import oncem "github.com/reem/go-once-mutex"
 import "fmt"
 
 type Data struct {
-    int x
+    x int
 }
 
 func main() {
